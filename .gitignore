@@ -50,3 +50,10 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Platformio
+.pio/
+.travis.yml
+.vscode/
+lib/
+test/

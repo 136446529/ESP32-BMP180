@@ -1,0 +1,17 @@
+{
+    "name": "ESP32-BMP180",
+    "keywords": "BMP180, esp32, esp-idf, espressif, pressure",
+    "description": "Full featured driver to use BMP180 sensor on esp32 with esp-idf framework",
+    "authors": {
+        "name": "Maksim Dzerkach",
+        "email": "ovsyanka@protonmail.com",
+        "maintainer": true
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/MD-Levitan/ESP32-BMP180"
+    },
+    "version": "1.0.1",
+    "frameworks": "espidf",
+    "platforms": "espressif32"
+}
