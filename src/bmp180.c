@@ -419,9 +419,9 @@ static status_t begin(private_bmp_sesnor_t *this)
     return STATUS_ERR;
 }
 
-static destroy(private_bmp_sesnor_t *sensor)
+static void destroy(private_bmp_sesnor_t *sensor)
 {
-    free(senosr);
+    free(sensor);
 }
 
 double celsius_to_fahrenheit(double deg)
