@@ -482,36 +482,3 @@ bmp_sensor_t *create_bmp_sensor_i2c(i2c_config_t i2c_config, bmp_mode_t mode)
 
     return &this->public;
 }
-
-void task_bmp180(void *ignore)
-{
-    bmp_sensor_t *sensor = create_bmp_sensor_default();
-    double temp;
-    int32_t press;
-
-    if (sensor == NULL)
-    {
-        ESP_LOGE(ERR_TAG, "cannot create/init sensor");
-        return;
-    }
-
-    sensor->begin(sensor);
-
-    while (1)
-    {
-        temp = sensor->get_temperature(sensor);
-        press = sensor->get_pressure(sensor);
-
-        ESP_LOGI(LOG_TAG, "Temp: %f, Pressure: %d", temp, press);    
-
-        vTaskDelay(10000 / portTICK_PERIOD_MS);
-    }
-}
-
-void app_main()
-{
-    esp_log_level_set(ERR_TAG, ESP_LOG_VERBOSE);
-    esp_log_level_set(LOG_TAG, ESP_LOG_VERBOSE);
-
-    task_bmp180(NULL);
-}
