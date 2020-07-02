@@ -91,6 +91,11 @@ struct bmp_sensor_t
      * @return      tuple with temperature and pressure.
      */
     tuple_t *(*get_tuple)(bmp_sensor_t *);
+
+    /**
+     * @brief Free sensor.
+     */
+    void (*destroy)(bmp_sensor_t *);
 };
 
 /**

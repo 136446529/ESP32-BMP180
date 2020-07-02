@@ -7,7 +7,6 @@
 
 #include "bmp180.h"
 
-
 #define ACK_CHECK_EN 0x1  /*!< I2C master will check ack from slave*/
 #define ACK_CHECK_DIS 0x0 /*!< I2C master will not check ack from slave */
 #define ACK_VAL 0x0       /*!< I2C ack value */
@@ -338,7 +337,7 @@ static tuple_t *read_tuple(private_bmp_sesnor_t *sensor)
     int64_t temp, pressure;
     uint32_t b4, b7;
     tuple_t *tuple = malloc(sizeof(tuple_t));
-    
+
     read_raw_temp(&temp);
     read_raw_pressure(sensor->mode, &pressure);
     b5 = calculate_cal_b5(sensor, temp);
@@ -389,6 +388,7 @@ static status_t i2c_master_init(i2c_config_t i2c_config)
         esp_error(error, "i2c_driver_install", NULL);
         status = STATUS_ERR;
     }
+    ESP_LOGD(LOG_TAG, "master_init successfuly finished");
     return status;
 }
 
@@ -410,13 +410,18 @@ static status_t begin(private_bmp_sesnor_t *this)
         read_int16(BMP085_REGISTER_CAL_MD, &this->md))
     {
 
-        ESP_LOGI(LOG_TAG, "Params: AC1: %d, AC2: %d, AC3: %d, AC4:%d, AC5: %d, AC6: %d, B1: %d, B2: %d, MB: %d, MC: %d, MD: %d",
+        ESP_LOGV(LOG_TAG, "Debug params: AC1: %d, AC2: %d, AC3: %d, AC4:%d, AC5: %d, AC6: %d, B1: %d, B2: %d, MB: %d, MC: %d, MD: %d",
                  this->ac1, this->ac2, this->ac3, this->ac4, this->ac5, this->ac6, this->b1, this->b2, this->mb, this->mc, this->md);
-        
+
         return STATUS_OK;
     }
 
     return STATUS_ERR;
+}
+
+static destroy(private_bmp_sesnor_t *sensor)
+{
+    free(senosr);
 }
 
 double celsius_to_fahrenheit(double deg)
@@ -431,8 +436,9 @@ double pascals_to_inHg(int32_t pressure)
 
 int32_t calculate_altitude(int32_t pressure, double pressure_std)
 {
-    return (int32_t) (44330 * (1.0 - pow(pressure / pressure_std, 0.1903)));
+    return (int32_t)(44330 * (1.0 - pow(pressure / pressure_std, 0.1903)));
 }
+
 
 bmp_sensor_t *create_bmp_sensor(gpio_num_t sda, gpio_num_t slc, bmp_mode_t mode)
 {
@@ -443,6 +449,7 @@ bmp_sensor_t *create_bmp_sensor(gpio_num_t sda, gpio_num_t slc, bmp_mode_t mode)
     this->public.get_temperature = read_temp;
     this->public.get_pressure = read_pressure;
     this->public.get_tuple = read_tuple;
+    this->public.destroy = destroy;
     this->mode = mode;
 
     i2c_config_t i2c_config = {
@@ -456,12 +463,14 @@ bmp_sensor_t *create_bmp_sensor(gpio_num_t sda, gpio_num_t slc, bmp_mode_t mode)
 
     if (i2c_master_init(i2c_config) != STATUS_OK)
     {
+        ESP_LOGW(ERR_TAG, "create_sensor failed")
         free(this);
         return NULL;
     }
 
     return &this->public;
 }
+
 
 bmp_sensor_t *create_bmp_sensor_i2c(i2c_config_t i2c_config, bmp_mode_t mode)
 {
@@ -472,10 +481,12 @@ bmp_sensor_t *create_bmp_sensor_i2c(i2c_config_t i2c_config, bmp_mode_t mode)
     this->public.get_temperature = read_temp;
     this->public.get_pressure = read_pressure;
     this->public.get_tuple = read_tuple;
+    this->public.destroy = destroy;
     this->mode = mode;
 
-     if (i2c_master_init(i2c_config) != STATUS_OK)
+    if (i2c_master_init(i2c_config) != STATUS_OK)
     {
+        ESP_LOGW(ERR_TAG, "create_sensor failed")
         free(this);
         return NULL;
     }

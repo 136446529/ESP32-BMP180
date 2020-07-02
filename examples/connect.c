@@ -3,6 +3,11 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
+#include <esp_log.h>
+#include <esp_err.h>
+
+static const char *TAG = "BMP180";
+
 void start_bmp180()
 {
     /* Connect to bmp180 */
@@ -12,7 +17,7 @@ void start_bmp180()
 
     if (sensor == NULL)
     {
-        ESP_LOGE(ERR_TAG, "cannot create/init sensor");
+        ESP_LOGE(TAG, "cannot create/init sensor");
         return;
     }
 
@@ -23,7 +28,7 @@ void start_bmp180()
         temp = sensor->get_temperature(sensor);
         press = sensor->get_pressure(sensor);
 
-        ESP_LOGI(LOG_TAG, "Temp: %f, Pressure: %d", temp, press);    
+        ESP_LOGI(TAG, "Temp: %f, Pressure: %d", temp, press);    
 
         vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
@@ -31,8 +36,7 @@ void start_bmp180()
 
 void app_main()
 {
-    esp_log_level_set(ERR_TAG, ESP_LOG_VERBOSE);
-    esp_log_level_set(LOG_TAG, ESP_LOG_VERBOSE);
+    esp_log_level_set(TAG, ESP_LOG_VERBOSE);
 
     start_bmp180(NULL);
 }
