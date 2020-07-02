@@ -463,7 +463,7 @@ bmp_sensor_t *create_bmp_sensor(gpio_num_t sda, gpio_num_t slc, bmp_mode_t mode)
 
     if (i2c_master_init(i2c_config) != STATUS_OK)
     {
-        ESP_LOGW(ERR_TAG, "create_sensor failed")
+        ESP_LOGW(ERR_TAG, "create_sensor failed");
         free(this);
         return NULL;
     }
@@ -486,7 +486,7 @@ bmp_sensor_t *create_bmp_sensor_i2c(i2c_config_t i2c_config, bmp_mode_t mode)
 
     if (i2c_master_init(i2c_config) != STATUS_OK)
     {
-        ESP_LOGW(ERR_TAG, "create_sensor failed")
+        ESP_LOGW(ERR_TAG, "create_sensor failed");
         free(this);
         return NULL;
     }
