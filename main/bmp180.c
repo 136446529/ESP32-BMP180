@@ -421,6 +421,13 @@ static status_t begin(private_bmp_sesnor_t *this)
 
 static void destroy(private_bmp_sesnor_t *sensor)
 {
+    esp_err_t error;
+    
+    error = i2c_driver_delete(I2C_NUM_0);
+    if (error != ESP_OK)
+    {
+        esp_error(error, "i2c_driver_delete", NULL);
+    }
     free(sensor);
 }
 
